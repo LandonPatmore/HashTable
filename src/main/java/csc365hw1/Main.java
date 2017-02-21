@@ -13,6 +13,10 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/GUI.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
+
+        PythonRunner pr = new PythonRunner();
+        pr.pythonRunner();
+
         primaryStage.show();
     }
 

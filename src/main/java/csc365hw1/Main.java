@@ -11,11 +11,12 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/GUI.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("Tidal Stations Data");
+        primaryStage.setScene(new Scene(root, 430, 570));
+        primaryStage.setResizable(false);
 
         PythonRunner pr = new PythonRunner();
-        pr.pythonRunner();
+        //pr.pythonRunner();
 
         primaryStage.show();
     }

@@ -14,10 +14,6 @@ public class Main extends Application {
         primaryStage.setTitle("Tidal Stations Data");
         primaryStage.setScene(new Scene(root, 430, 570));
         primaryStage.setResizable(false);
-
-        PythonRunner pr = new PythonRunner();
-        //pr.pythonRunner();
-
         primaryStage.show();
     }
 

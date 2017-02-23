@@ -17,10 +17,10 @@ import java.util.Map;
  * Created by landon on 2/21/17.
  */
 public class DataPuller {
-    private static String STATION_ID;
-    private static String URL;
-    private static List<Double> VALUES;
-    private static Map<String, List<Double>> MAP;
+    private String STATION_ID;
+    private String URL;
+    private List<Double> VALUES;
+    private Map<String, List<Double>> MAP;
 
     public DataPuller(String sid){
         STATION_ID = sid;

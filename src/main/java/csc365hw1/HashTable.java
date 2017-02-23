@@ -1,38 +1,78 @@
 package csc365hw1;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by landon on 2/21/17.
  */
 public class HashTable {
     private static int size;
-    private List<List<Double>>[] HT;
-    private List<String> ids;
+    private KeyVal[] HT;
+    private ArrayList<KeyVal> data;
 
 
-    public HashTable(List<String> l){
+    public HashTable(ArrayList<KeyVal> m){
         size = 809;
-        ids = l;
-        HT = new ArrayList[size];
+        HT = new KeyVal[nextPrime()];
+        data = m;
     }
 
-    public void tellEmpty(){
-        for(int i = 0; i < size; i++){
-            if(HT[i] == null){
-                System.out.println("TRUE");
+    public void insertHash() {
+        for (KeyVal key : data){
+            Hashing h = new Hashing(key.getKey(), key.getKey().length());
+            int hash = h.hasher();
+            KeyVal kv = new KeyVal(key.getKey(), key.getVal());
+
+            System.out.println(hash);
+            if(indexEmpty(hash)) {
+                HT[hash] = kv;
+            }
+        }
+        //for testing (will remove)
+        displayHash();
+    }
+
+    //TESTING METHOD -- REMOVE
+    private void displayHash(){
+        for(int i = 0; i < HT.length; i++){
+            if(HT[i] != null) {
+                System.out.println(HT[i].getVal());
             }
         }
     }
 
+    private boolean indexEmpty(int h){
+        if(HT[h] != null){
+            return false;
+        }
+        return true;
+    }
 
-    public void insertHash(){
-        Hashing h;
+    private void collisionFix(int h){
+        if(!indexEmpty(h)){
 
-        for(String id: ids) {
-            h = new Hashing(id, id.length());
-            System.out.println("The index = " + h.hasher() + " for value " + id);
+        }
+    }
+
+    private static boolean isPrime(int n){
+        if(n % 2 == 0) {
+            return false;
+        }
+
+        for(int i = 3; i * i <= n; i+=2) {
+            if (n % i == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static int nextPrime(){
+        for(int i = size; true; i++) {
+            if (isPrime(i)) {
+                return i;
+            }
         }
     }
 
@@ -61,30 +101,7 @@ public class HashTable {
             return getIndex(hash);
         }
 
-        private boolean isPrime(int n){
-            if(n % 2 == 0) {
-                return false;
-            }
-
-            for(int i = 3; i * i <= n; i+=2) {
-                if (n % i == 0) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private int nextPrime(){
-            for(int i = size; true; i++) {
-                if (isPrime(i)) {
-                    return i;
-                }
-            }
-        }
-
         private int getIndex(int cH){
-            System.out.println(nextPrime());
             index = (cH & 0x7FFFFFFF) % nextPrime();
             return index;
         }

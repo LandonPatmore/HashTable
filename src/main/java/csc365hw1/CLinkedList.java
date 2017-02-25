@@ -7,23 +7,16 @@ public class CLinkedList {
 
     DateHappiness head;
 
-    public CLinkedList(DateHappiness kv){
+    public CLinkedList(DateHappiness kv) {
         head = kv;
     }
 
-    public void add(DateHappiness dateHappiness){
-        while(head.getNext() != null){
+    public void add(DateHappiness dateHappiness) {
+        while (head.getNext() != null) {
             head = head.getNext();
         }
-        if(head.getNext() == null){
+        if (head.getNext() == null) {
             head.setNext(dateHappiness);
-        }
-    }
-
-    public void display(){
-        while(head.getNext() != null){
-            System.out.print(head.getKey() + " ");
-            head = head.getNext();
         }
     }
 

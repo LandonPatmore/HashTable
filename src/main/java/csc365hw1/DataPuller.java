@@ -12,9 +12,10 @@ import org.json.JSONObject;
  */
 public class DataPuller {
 
-    public DataPuller(){}
+    public DataPuller() {
+    }
 
-    public void getSentences() throws UnirestException {
+    public boolean getSentences() throws UnirestException {
         HttpResponse<JsonNode> jsonResponse;
         HashTable table = new HashTable();
         try {
@@ -24,7 +25,7 @@ public class DataPuller {
                     .asJson();
 
             JSONArray data = jsonResponse.getBody().getObject().getJSONArray("objects");
-            for(int i = 0; i < data.length(); i++){
+            for (int i = 0; i < data.length(); i++) {
                 JSONObject obj = data.getJSONObject(i);
 
                 String[] date = obj.getString("date").split("T");
@@ -33,12 +34,10 @@ public class DataPuller {
                 DateHappiness dateHappiness = new DateHappiness(date[0], happiness);
                 table.put(dateHappiness);
             }
-            //table.displayHash();
-            System.out.println(table.similarity("2013-05-09"));
-
-
+            return true;
         } catch (UnirestException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

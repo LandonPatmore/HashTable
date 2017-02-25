@@ -9,7 +9,7 @@ public class DateHappiness {
 
     private DateHappiness next;
 
-    public DateHappiness(String k, Double v){
+    public DateHappiness(String k, Double v) {
         key = k;
         val = v;
     }
@@ -22,8 +22,12 @@ public class DateHappiness {
         return val;
     }
 
-    public void setNext(DateHappiness next) { this.next = next; }
+    public void setNext(DateHappiness next) {
+        this.next = next;
+    }
 
-    public DateHappiness getNext() { return next; }
+    public DateHappiness getNext() {
+        return next;
+    }
 
 }

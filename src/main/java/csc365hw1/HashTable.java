@@ -28,16 +28,16 @@ public class HashTable {
         Hashing h = new Hashing(key, key.length());
         int hash = h.hasher() % nextPrime();
 
+        if(indexEmpty(hash)){
+            return null;
+        }
+
         DateHappiness head = HT[hash].head;
 
         while(!indexEmpty(hash) && !HT[hash].head.getKey().equals(key)){
             head = HT[hash].head.getNext();
         }
-        if(indexEmpty(hash)){
-            return null;
-        } else {
-            return head.getVal();
-        }
+        return head.getVal();
     }
 
     public String similarity(String key){
@@ -62,7 +62,7 @@ public class HashTable {
             }
         }
 
-        return closest + "   " + check;
+        return "Closest Key: " + closest + " | Value: " + check;
     }
 
     public Double ManhattanDistance(Double x, Double y){

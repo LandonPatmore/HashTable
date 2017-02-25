@@ -1,44 +1,72 @@
 package csc365hw1;
 
-import java.util.ArrayList;
-
 /**
  * Created by landon on 2/21/17.
  */
 public class HashTable {
     private static int size;
-    private KeyVal[] HT;
-    private ArrayList<KeyVal> data;
+    private CLinkedList[] HT;
 
 
-    public HashTable(ArrayList<KeyVal> m){
-        size = 809;
-        HT = new KeyVal[nextPrime()];
-        data = m;
+    public HashTable(){
+        size = 2500;
+        HT = new CLinkedList[nextPrime()];
     }
 
-    public void insertHash() {
-        for (KeyVal key : data){
-            Hashing h = new Hashing(key.getKey(), key.getKey().length());
-            int hash = h.hasher();
-            KeyVal kv = new KeyVal(key.getKey(), key.getVal());
-
-            System.out.println(hash);
-            if(indexEmpty(hash)) {
-                HT[hash] = kv;
-            }
+    public void put(DateHappiness dateHappiness){
+        Hashing h = new Hashing(dateHappiness.getKey(), dateHappiness.getKey().length());
+        int hash = h.hasher() % nextPrime();
+        if(indexEmpty(hash)){
+            HT[hash] = new CLinkedList(dateHappiness);
         }
-        //for testing (will remove)
-        displayHash();
+        if(!indexEmpty(hash) && !HT[hash].head.getKey().equals(dateHappiness.getKey())){
+            HT[hash].add(dateHappiness);
+        }
     }
 
-    //TESTING METHOD -- REMOVE
-    private void displayHash(){
-        for(int i = 0; i < HT.length; i++){
-            if(HT[i] != null) {
-                System.out.println(HT[i].getVal());
+    public Double get(String key){
+        Hashing h = new Hashing(key, key.length());
+        int hash = h.hasher() % nextPrime();
+
+        DateHappiness head = HT[hash].head;
+
+        while(!indexEmpty(hash) && !HT[hash].head.getKey().equals(key)){
+            head = HT[hash].head.getNext();
+        }
+        if(indexEmpty(hash)){
+            return null;
+        } else {
+            return head.getVal();
+        }
+    }
+
+    public String similarity(String key){
+        String closest = "";
+        Double check = 0.0;
+
+        for(int i = 0; i < HT.length; i++) {
+            if (HT[i] != null) {
+                DateHappiness head = HT[i].head;
+                if (HT[i].head.getNext() != null) {
+                    head = head.getNext();
+                    if (ManhattanDistance(get(key), head.getVal()) >= check) {
+                        check = head.getVal();
+                        closest = head.getKey();
+                    } else {
+                        if (ManhattanDistance(get(key), head.getVal()) >= check) {
+                            check = head.getVal();
+                            closest = head.getKey();
+                        }
+                    }
+                }
             }
         }
+
+        return closest + "   " + check;
+    }
+
+    public Double ManhattanDistance(Double x, Double y){
+        return Math.abs(x - y);
     }
 
     private boolean indexEmpty(int h){
@@ -48,13 +76,8 @@ public class HashTable {
         return true;
     }
 
-    private void collisionFix(int h){
-        if(!indexEmpty(h)){
 
-        }
-    }
-
-    private static boolean isPrime(int n){
+    private boolean isPrime(int n){
         if(n % 2 == 0) {
             return false;
         }
@@ -68,7 +91,7 @@ public class HashTable {
         return true;
     }
 
-    private static int nextPrime(){
+    private int nextPrime(){
         for(int i = size; true; i++) {
             if (isPrime(i)) {
                 return i;
@@ -78,7 +101,7 @@ public class HashTable {
 
     private static class Hashing{
         private String hashableKey;
-        private int index;
+        private int hashed;
         private int length;
 
         private Hashing(String hk, int l){
@@ -102,8 +125,8 @@ public class HashTable {
         }
 
         private int getIndex(int cH){
-            index = (cH & 0x7FFFFFFF) % nextPrime();
-            return index;
+            hashed = (cH & 0x7FFFFFFF);
+            return hashed;
         }
     }
 }

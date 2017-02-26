@@ -5,18 +5,18 @@ package csc365hw1;
  */
 public class CLinkedList {
 
-    DateHappiness head;
+    KeyVal head;
 
-    public CLinkedList(DateHappiness kv) {
+    public CLinkedList(KeyVal kv) {
         head = kv;
     }
 
-    public void add(DateHappiness dateHappiness) {
+    public void add(KeyVal keyVal) {
         while (head.getNext() != null) {
             head = head.getNext();
         }
         if (head.getNext() == null) {
-            head.setNext(dateHappiness);
+            head.setNext(keyVal);
         }
     }
 

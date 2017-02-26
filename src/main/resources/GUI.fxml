@@ -30,7 +30,7 @@
                             <RowConstraints maxHeight="321.0" minHeight="10.0" prefHeight="269.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleButtonAction" prefHeight="68.0" prefWidth="334.0" text="Grab and Hash!" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
+                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleButtonActionGetData" prefHeight="68.0" prefWidth="334.0" text="Grab and Hash!" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM">
                                  <font>
                                     <Font size="36.0" />
                                  </font>

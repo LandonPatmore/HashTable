@@ -1,30 +1,38 @@
 package csc365hw1;
 
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * Created by landon on 2/21/17.
  */
 public class HashTable {
     private static int size;
     private CLinkedList[] HT;
+    private ArrayList<Double> checker;
 
 
     public HashTable() {
-        size = 2500;
+        size = 4001;
         HT = new CLinkedList[nextPrime()];
+        checker = new ArrayList<>();
     }
 
-    public void put(DateHappiness dateHappiness) {
-        Hashing h = new Hashing(dateHappiness.getKey(), dateHappiness.getKey().length());
+    public void put(KeyVal keyVal) {
+        Hashing h = new Hashing(keyVal.getKey(), keyVal.getKey().length());
         int hash = h.hasher() % nextPrime();
         if (indexEmpty(hash)) {
-            HT[hash] = new CLinkedList(dateHappiness);
+            HT[hash] = new CLinkedList(keyVal);
         }
-        if (!indexEmpty(hash) && !HT[hash].head.getKey().equals(dateHappiness.getKey())) {
-            HT[hash].add(dateHappiness);
+        if (!indexEmpty(hash) && !HT[hash].head.getKey().equals(keyVal.getKey())) {
+            HT[hash].add(keyVal);
         }
     }
 
-    public Double get(String key) {
+    public double[] get(String key) {
         Hashing h = new Hashing(key, key.length());
         int hash = h.hasher() % nextPrime();
 
@@ -32,7 +40,7 @@ public class HashTable {
             return null;
         }
 
-        DateHappiness head = HT[hash].head;
+        KeyVal head = HT[hash].head;
 
         while (!indexEmpty(hash) && !HT[hash].head.getKey().equals(key)) {
             head = HT[hash].head.getNext();
@@ -40,33 +48,33 @@ public class HashTable {
         return head.getVal();
     }
 
-    public String similarity(String key) {
-        String closest = "";
-        Double check = 0.0;
+    public void displayHash(){
+        for(int i = 0; i < HT.length; i++){
+            System.out.print(i + " ");
+            if(HT[i] != null){
+                KeyVal kv = HT[i].head;
+                System.out.print(kv.getKey() + " " + Arrays.toString(kv.getVal()) + "  ");
+                while(kv.getNext() != null){
+                    kv = kv.getNext();
+                    System.out.print(kv.getKey() + " " + Arrays.toString(kv.getVal()) + "  ");
+                }
+            }
+            System.out.println();
+        }
+    }
 
-        for (int i = 0; i < HT.length; i++) {
-            if (HT[i] != null) {
-                DateHappiness head = HT[i].head;
-                if (HT[i].head.getNext() != null) {
-                    head = head.getNext();
-                    if (ManhattanDistance(get(key), head.getVal()) >= check) {
-                        check = head.getVal();
-                        closest = head.getKey();
-                    } else {
-                        if (ManhattanDistance(get(key), head.getVal()) >= check) {
-                            check = head.getVal();
-                            closest = head.getKey();
-                        }
-                    }
+    public void similarity(String key){
+        PearsonsCorrelation pc = new PearsonsCorrelation();
+        for(int i = 0; i < HT.length; i++){
+            if(HT[i] != null){
+                KeyVal kv = HT[i].head;
+                System.out.println(kv.getKey() + "  " + pc.correlation(get(key), kv.getVal()));
+                while(kv.getNext() != null){
+                    kv = kv.getNext();
+                    System.out.println(kv.getKey() + "  " + pc.correlation(get(key), kv.getVal()));
                 }
             }
         }
-
-        return "Closest Key: " + closest + " | Value: " + check;
-    }
-
-    public Double ManhattanDistance(Double x, Double y) {
-        return Math.abs(x - y);
     }
 
     private boolean indexEmpty(int h) {

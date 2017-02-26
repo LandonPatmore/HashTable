@@ -5,39 +5,57 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
-import org.json.JSONObject;
+
+import java.security.Key;
+import java.util.ArrayList;
 
 /**
  * Created by landon on 2/21/17.
  */
 public class DataPuller {
+    //private ArrayList<String> setter;
+    private ArrayList<KeyVal> stockInfo;
+    private String URL = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?date.gte=20150101" +
+            "&date.lt=20160101&ticker=MSFT,FB,GOOGL,INTC,CSCO,ORCL,AAPL,AMZN,AMD&";
+    private String KEY = "api_key=aWGH5wHqiKkFgKFSSEuB";
 
     public DataPuller() {
+        stockInfo = new ArrayList<>();
     }
 
-    public boolean getSentences() throws UnirestException {
+    public ArrayList<KeyVal> getSentences() throws UnirestException {
         HttpResponse<JsonNode> jsonResponse;
-        HashTable table = new HashTable();
         try {
-            jsonResponse = Unirest.get("https://andyreagan-hedonometer-v1.p.mashape.com/timeseries/?format=json&limit=2500")
-                    .header("X-Mashape-Key", "PPqTDCMRLDmsha4vRWPWnR8sll2Qp1gtIbljsnGKVluM1Z1dTE")
+            jsonResponse = Unirest.get(URL + KEY)
                     .header("Accept", "application/json")
                     .asJson();
 
-            JSONArray data = jsonResponse.getBody().getObject().getJSONArray("objects");
+            JSONArray data = jsonResponse.getBody().getObject().getJSONObject("datatable").getJSONArray("data");
+
             for (int i = 0; i < data.length(); i++) {
-                JSONObject obj = data.getJSONObject(i);
+                String key = data.getJSONArray(i).get(0) + " " + data.getJSONArray(i).get(1);
+                double[] info = new double[5];
+                for (int j = 2; j <= 6; j++) {
+                    info[j - 2] = data.getJSONArray(i).getDouble(j);
+                }
 
-                String[] date = obj.getString("date").split("T");
-                Double happiness = obj.getDouble("happiness");
-
-                DateHappiness dateHappiness = new DateHappiness(date[0], happiness);
-                table.put(dateHappiness);
+                KeyVal keyVal = new KeyVal(key, info);
+                stockInfo.add(keyVal);
             }
-            return true;
+
+            HashTable ht = new HashTable();
+            for(KeyVal k : stockInfo){
+                ht.put(k);
+            }
+
+            ht.displayHash();
+            //ht.similarity("AAPL 2015-12-21");
+
+
+            return stockInfo;
         } catch (UnirestException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         Parent root = FXMLLoader.load(getClass().getResource("/GUI.fxml"));
-        primaryStage.setTitle("CSC365 Homework");
+        primaryStage.setTitle("Stocks HashTable");
         primaryStage.setScene(new Scene(root, 430, 685));
         primaryStage.setResizable(false);
         primaryStage.show();

@@ -1,40 +1,41 @@
 package csc365hw1;
 
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
  * Created by landon on 2/21/17.
  */
 public class HashTable {
-    private int size;
     private CLinkedList[] HT;
+    private int tableSize = 10000;
+    private int count = 0;
 
 
     public HashTable() {
-        size = 20001;
-        HT = new CLinkedList[nextPrime()];
+        HT = new CLinkedList[nextPrime(tableSize)];
     }
 
     public void put(KeyVal keyVal) {
         Hashing h = new Hashing(keyVal.getKey(), keyVal.getKey().length());
-        int hash = h.hasher() % nextPrime();
+        int hash = h.hasher() % nextPrime(tableSize);
         if (indexEmpty(hash)) {
             HT[hash] = new CLinkedList(keyVal);
+            count++;
         }
         if (!indexEmpty(hash) && !HT[hash].head.getKey().equals(keyVal.getKey())) {
             HT[hash].add(keyVal);
+            count++;
+        }
+
+        if((float)(count / tableSize) > 0.75){
+            resize();
         }
     }
 
     public Double[] get(String key) {
         Hashing h = new Hashing(key, key.length());
-        int hash = h.hasher() % nextPrime();
-        //System.out.println(hash);
+        int hash = h.hasher() % nextPrime(tableSize);
 
         if (indexEmpty(hash)) {
             return null;
@@ -63,6 +64,7 @@ public class HashTable {
             System.out.println();
         }
     }
+
 
     public ArrayList<KeyVal> similarity(String key){
         //earsonsCorrelation pc = new PearsonsCorrelation();
@@ -126,10 +128,33 @@ public class HashTable {
         return true;
     }
 
-    private int nextPrime() {
-        for (int i = size; true; i++) {
+    private int nextPrime(int n) {
+        for (int i = n; true; i++) {
             if (isPrime(i)) {
                 return i;
+            }
+        }
+    }
+
+    private void resize(){
+        System.out.println("TO BE RESIZED");
+        tableSize = 2 * tableSize;
+        tableSize = nextPrime(tableSize);
+        CLinkedList[] old = HT;
+        System.out.println("SIZE OF NEW TABLE: " + tableSize);
+        HT = new CLinkedList[tableSize];
+        count = 0;
+
+        for(int i = 0; i < old.length; i++){
+            if(old[i] != null){
+                KeyVal kv = old[i].head;
+                put(kv);
+
+                while (kv.getNext() != null) {
+                    kv = kv.getNext();
+                    put(kv);
+                }
+
             }
         }
     }

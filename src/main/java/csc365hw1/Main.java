@@ -13,7 +13,7 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("/GUI.fxml"));
         primaryStage.setTitle("CSC365 Homework");
-        primaryStage.setScene(new Scene(root, 430, 570));
+        primaryStage.setScene(new Scene(root, 430, 685));
         primaryStage.setResizable(false);
         primaryStage.show();
 

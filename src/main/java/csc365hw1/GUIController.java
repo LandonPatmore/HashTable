@@ -34,11 +34,11 @@ public class GUIController {
     void handleButtonActionGetData() throws UnirestException {
         d = dp.getSentences();
 
-        gLabel.setText("Done getting data and hashing!");
-
         for(KeyVal dh : d){
             ht.put(dh);
         }
+
+        gLabel.setText("Done getting data and hashing!");
 
         ObservableList<KeyVal> obList = FXCollections.observableList(d);
 

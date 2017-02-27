@@ -8,15 +8,15 @@ import java.util.Collections;
  */
 public class HashTable {
     private CLinkedList[] HT;
-    private int tableSize = 10000;
-    private int count = 0;
+    private int tableSize = 10000; //initial size of the array
+    private int count = 0; //keeps track of how many elements are inside the array at a given time
 
 
     public HashTable() {
         HT = new CLinkedList[nextPrime(tableSize)];
     }
 
-    public void put(KeyVal keyVal) {
+    public void put(KeyVal keyVal) { //puts the desired key into the hashtable
         Hashing h = new Hashing(keyVal.getKey(), keyVal.getKey().length());
         int hash = h.hasher() % nextPrime(tableSize);
         if (indexEmpty(hash)) {
@@ -33,7 +33,7 @@ public class HashTable {
         }
     }
 
-    public Double[] get(String key) {
+    public Double[] get(String key) { //gets the selected key value
         Hashing h = new Hashing(key, key.length());
         int hash = h.hasher() % nextPrime(tableSize);
 
@@ -71,28 +71,28 @@ public class HashTable {
         ArrayList<KeyVal> test = new ArrayList<>();
         Double check = 500000000.0;
         for(int i = 0; i < HT.length; i++){
-            if(HT[i] != null){
+            if(!indexEmpty(i)){
                 KeyVal kv = HT[i].head;
-                if(ManhattanDistance(get(key), kv.getVal()) < check && !kv.getKey().equals(key)) {
-                    check = ManhattanDistance(get(key), kv.getVal());
+                Double distance = ManhattanDistance(get(key), kv.getVal());
+                if(distance < check && !kv.getKey().equals(key)) {
+                    check = distance;
                     kv.setmD(check);
                     test.add(kv);
-                    //System.out.println(kv.getKey() + "  " + ManhattanDistance(get(key), kv.getVal()));
                 }
                 while(kv.getNext() != null && !kv.getNext().getKey().equals(key)){
                     kv = kv.getNext();
-                    if(ManhattanDistance(get(key), kv.getVal()) < check) {
-                        check = ManhattanDistance(get(key), kv.getVal());
+                    distance = ManhattanDistance(get(key), kv.getVal());
+                    if(distance < check) {
+                        check = distance;
                         kv.setmD(check);
                         test.add(kv);
-                        //System.out.println(kv.getKey() + "  " + ManhattanDistance(get(key), kv.getVal()));
                     }
                 }
             }
         }
-        Collections.sort(test);
-        System.out.println("SIM");
-        for(KeyVal k : test){
+
+        Collections.sort(test); //sorts by descending order based on MD
+        for(KeyVal k : test){ //prints out closest stocks under 500,000,000
             System.out.println(k + "     " + k.getmD());
         }
         System.out.println();
@@ -101,21 +101,21 @@ public class HashTable {
     }
 
     public Double ManhattanDistance(Double[] x, Double[] y){
-        Double sumx = 0.0;
-        Double sumy = 0.0;
+        Double sumx, sumy;
+        sumx = sumy = 0.0;
 
         for(int i = 0; i < x.length; i++){
             sumx += x[i];
             sumy += y[i];
         }
-        return Math.abs(sumx - sumy);
+        return Math.abs(sumx - sumy); //returns the absolute value between sum x and sum y
     }
 
-    private boolean indexEmpty(int h) {
+    private boolean indexEmpty(int h) { //checks to see if the index is actually empty
         return HT[h] == null;
     }
 
-    private boolean isPrime(int n) {
+    private boolean isPrime(int n) { //checks to see if the number is actually a prime number
         if (n % 2 == 0) {
             return false;
         }
@@ -128,7 +128,7 @@ public class HashTable {
         return true;
     }
 
-    private int nextPrime(int n) {
+    private int nextPrime(int n) { //finds the next prime
         for (int i = n; true; i++) {
             if (isPrime(i)) {
                 return i;
@@ -136,16 +136,16 @@ public class HashTable {
         }
     }
 
-    private void resize(){
+    private void resize(){ //auto resizes the HashTable if more than 75% of the table is full
         System.out.println("TO BE RESIZED");
         tableSize = 2 * tableSize;
-        tableSize = nextPrime(tableSize);
-        CLinkedList[] old = HT;
+        tableSize = nextPrime(tableSize); //sets the new size to the next available prime
+        CLinkedList[] old = HT; //holds a reference to the old table
         System.out.println("SIZE OF NEW TABLE: " + tableSize);
-        HT = new CLinkedList[tableSize];
-        count = 0;
+        HT = new CLinkedList[tableSize]; //creates a new table
+        count = 0; //resets the count to 0
 
-        for(int i = 0; i < old.length; i++){
+        for(int i = 0; i < old.length; i++){ //puts the old values in the new table
             if(old[i] != null){
                 KeyVal kv = old[i].head;
                 put(kv);
@@ -159,7 +159,7 @@ public class HashTable {
         }
     }
 
-    private class Hashing {
+    private class Hashing { //static class used for hashing values to insert into the hashtable
         private String hashableKey;
         private int hashed;
         private int length;
@@ -174,18 +174,18 @@ public class HashTable {
             int i = 0;
             int hash = 0;
             while (i != length) {
-                hash += hashableKey.charAt(i++);
+                hash += hashableKey.charAt(i++); //hashes each character of the key
                 hash += hash << 10;
                 hash ^= hash >> 6;
             }
             hash += hash << 3;
             hash ^= hash >> 11;
             hash += hash << 15;
-            return getIndex(hash);
+            return getHash(hash);
         }
 
-        private int getIndex(int cH) {
-            hashed = (cH & 0x7FFFFFFF);
+        private int getHash(int cH) { //gets the hash of the key
+            hashed = (cH & 0x7FFFFFFF); //doesn't allow for negative hash values
             return hashed;
         }
     }

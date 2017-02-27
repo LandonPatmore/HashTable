@@ -6,17 +6,29 @@ import java.util.Collections;
 /**
  * Created by landon on 2/21/17.
  */
+
+/**
+ * Custom HashTable Implementation
+ */
 public class HashTable {
     private CLinkedList[] HT;
-    private int tableSize = 10000; //initial size of the array
-    private int count = 0; //keeps track of how many elements are inside the array at a given time
+    private int tableSize = 10000;
+    private int count = 0;
 
+    /**
+     * creates a new Array of CLinkedLists
+     */
 
     public HashTable() {
         HT = new CLinkedList[nextPrime(tableSize)];
     }
 
-    public void put(KeyVal keyVal) { //puts the desired key into the hashtable
+    /**
+     * Puts a KeyVal into the HashTable and will automatically turn collisions into a CLinkedList
+     * @param keyVal takes a KeyVal to put into the HashTable
+     */
+
+    public void put(KeyVal keyVal) {
         Hashing h = new Hashing(keyVal.getKey(), keyVal.getKey().length());
         int hash = h.hasher() % nextPrime(tableSize);
         if (indexEmpty(hash)) {
@@ -33,7 +45,13 @@ public class HashTable {
         }
     }
 
-    public Double[] get(String key) { //gets the selected key value
+    /**
+     *
+     * @param key takes a String and checks to see if the key is within the HashTable
+     * @return either a null if it can't be found or the Double[] of Values of the Key
+     */
+
+    public Double[] get(String key) {
         Hashing h = new Hashing(key, key.length());
         int hash = h.hasher() % nextPrime(tableSize);
 
@@ -49,7 +67,10 @@ public class HashTable {
         return head.getVal();
     }
 
-    //FOR TESTING - WILL REMOVE
+    /**
+     * Testing method to see how the HashTable was placing KeyVals
+     */
+
     public void displayHash(){
         for(int i = 0; i < HT.length; i++){
             System.out.print(i + " ");
@@ -65,6 +86,12 @@ public class HashTable {
         }
     }
 
+    /**
+     * Looks to find stocks with a similarity of 500,000,000 or less
+     * @param key takes a String and checks its values against all of the other keys' values to find the most
+     *            similar stock to the one requested
+     * @return ArrayList of KeyVals to then be used in the GUI to display the most similar keys to the requested one
+     */
 
     public ArrayList<KeyVal> similarity(String key){
         //earsonsCorrelation pc = new PearsonsCorrelation();
@@ -91,8 +118,8 @@ public class HashTable {
             }
         }
 
-        Collections.sort(test); //sorts by descending order based on MD
-        for(KeyVal k : test){ //prints out closest stocks under 500,000,000
+        Collections.sort(test);
+        for(KeyVal k : test){
             System.out.println(k + "     " + k.getmD());
         }
         System.out.println();
@@ -100,7 +127,14 @@ public class HashTable {
         return test;
     }
 
-    public Double ManhattanDistance(Double[] x, Double[] y){
+    /**
+     *
+     * @param x requested key's values
+     * @param y current index's values
+     * @return Absolute value of sum(x) - sum(y)
+     */
+
+    private Double ManhattanDistance(Double[] x, Double[] y){
         Double sumx, sumy;
         sumx = sumy = 0.0;
 
@@ -108,14 +142,26 @@ public class HashTable {
             sumx += x[i];
             sumy += y[i];
         }
-        return Math.abs(sumx - sumy); //returns the absolute value between sum x and sum y
+        return Math.abs(sumx - sumy);
     }
+
+    /**
+     *
+     * @param h takes the hashValue % tableSize
+     * @return if the index is actually null or not
+     */
 
     private boolean indexEmpty(int h) { //checks to see if the index is actually empty
         return HT[h] == null;
     }
 
-    private boolean isPrime(int n) { //checks to see if the number is actually a prime number
+    /**
+     *
+     * @param n takes an integer
+     * @return if the requested integer is actually a prime or not
+     */
+
+    private boolean isPrime(int n) {
         if (n % 2 == 0) {
             return false;
         }
@@ -128,7 +174,13 @@ public class HashTable {
         return true;
     }
 
-    private int nextPrime(int n) { //finds the next prime
+    /**
+     *
+     * @param n takes an integer
+     * @return the next possible prime
+     */
+
+    private int nextPrime(int n) {
         for (int i = n; true; i++) {
             if (isPrime(i)) {
                 return i;
@@ -136,16 +188,23 @@ public class HashTable {
         }
     }
 
-    private void resize(){ //auto resizes the HashTable if more than 75% of the table is full
-        System.out.println("TO BE RESIZED");
-        tableSize = 2 * tableSize;
-        tableSize = nextPrime(tableSize); //sets the new size to the next available prime
-        CLinkedList[] old = HT; //holds a reference to the old table
-        System.out.println("SIZE OF NEW TABLE: " + tableSize);
-        HT = new CLinkedList[tableSize]; //creates a new table
-        count = 0; //resets the count to 0
+    /**
+     * Auto resizes the HashTable when the HashTable is filled 0.75 or larger
+     */
 
-        for(int i = 0; i < old.length; i++){ //puts the old values in the new table
+    private void resize(){
+        System.out.println("TO BE RESIZED");
+
+        tableSize = 2 * tableSize;
+        tableSize = nextPrime(tableSize);
+        CLinkedList[] old = HT;
+
+        System.out.println("SIZE OF NEW TABLE: " + tableSize);
+
+        HT = new CLinkedList[tableSize];
+        count = 0;
+
+        for(int i = 0; i < old.length; i++){
             if(old[i] != null){
                 KeyVal kv = old[i].head;
                 put(kv);
@@ -154,27 +213,39 @@ public class HashTable {
                     kv = kv.getNext();
                     put(kv);
                 }
-
             }
         }
     }
 
-    private class Hashing { //static class used for hashing values to insert into the hashtable
+    /**
+     * Custom hashing class to hash the keys for placement in the HashTable
+     */
+
+    private class Hashing {
         private String hashableKey;
         private int hashed;
         private int length;
+
+        /**
+         *
+         * @param hk a key
+         * @param l the length of the key requested
+         */
 
         private Hashing(String hk, int l) {
             hashableKey = hk;
             length = l;
         }
 
-        // Jenkins hash function
+        /**
+         * Jenkins One-At-A-Time Hash Function implementation
+         * @return the hash value of the given key
+         */
         private int hasher() {
             int i = 0;
             int hash = 0;
             while (i != length) {
-                hash += hashableKey.charAt(i++); //hashes each character of the key
+                hash += hashableKey.charAt(i++);
                 hash += hash << 10;
                 hash ^= hash >> 6;
             }
@@ -184,8 +255,14 @@ public class HashTable {
             return getHash(hash);
         }
 
-        private int getHash(int cH) { //gets the hash of the key
-            hashed = (cH & 0x7FFFFFFF); //doesn't allow for negative hash values
+        /**
+         *
+         * @param h takes the hash value
+         * @return the actual hash value by not allowing any negatives
+         */
+
+        private int getHash(int h) {
+            hashed = (h & 0x7FFFFFFF);
             return hashed;
         }
     }

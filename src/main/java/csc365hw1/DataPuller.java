@@ -5,25 +5,36 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
-
-import java.security.Key;
 import java.util.ArrayList;
 
 /**
  * Created by landon on 2/21/17.
  */
+
+/**
+ * Custom class to pull data from stock site
+ */
 public class DataPuller {
-    //private ArrayList<String> setter;
     private ArrayList<KeyVal> stockInfo;
     private String URL = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?date.gte=20110101" +
             "&date.lt=20160101&ticker=MSFT,FB,GOOGL,INTC,CSCO,ORCL,AAPL,AMZN,AMD&";
     private String KEY = "api_key=aWGH5wHqiKkFgKFSSEuB";
 
+    /**
+     * creates a new ArrayList when instantiated
+     */
+
     public DataPuller() {
         stockInfo = new ArrayList<>();
     }
 
-    public ArrayList<KeyVal> getSentences() throws UnirestException {
+    /**
+     * Pulls down Stock Info and then parses it into an ArrayList of KeyVals
+     * @return ArrayList of KeyVals for GUI
+     * @throws UnirestException in the case that Unirest can't reach the server for any reason so the app does not crash
+     */
+
+    public ArrayList<KeyVal> getStockData() throws UnirestException {
         HttpResponse<JsonNode> jsonResponse;
         KeyVal keyVal;
         try {

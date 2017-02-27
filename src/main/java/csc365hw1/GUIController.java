@@ -8,10 +8,12 @@ import javafx.scene.control.*;
 
 import java.util.ArrayList;
 
+/**
+ * Controller for the GUI
+ */
 
 public class GUIController {
     private ArrayList<KeyVal> d;
-    private ObservableList obList;
     private DataPuller dp;
     private HashTable ht;
 
@@ -24,15 +26,23 @@ public class GUIController {
     @FXML
     private ListView<KeyVal> listView;
 
+    /**
+     * Initializes the DataPuller and HashTable
+     */
 
     public void initialize(){
         dp = new DataPuller();
         ht = new HashTable();
     }
 
+    /**
+     * Handles a button action to get the data from the stock server and also hashes it
+     * @throws UnirestException in the case that Unirest can't reach the server for any reason so the app does not crash
+     */
+
     @FXML
     void handleButtonActionGetData() throws UnirestException {
-        d = dp.getSentences();
+        d = dp.getStockData();
 
         for(KeyVal dh : d){
             ht.put(dh);
@@ -46,10 +56,14 @@ public class GUIController {
         listBox.getSelectionModel().selectFirst();
     }
 
+    /**
+     * Handles a button action to get the currently selected Key from the ComboBox and then shows the similarity
+     * metrics of the closest related stocks in the ListView
+     */
+
     @FXML
     void handleButtonActionSubmit(){
         String output = listBox.getSelectionModel().getSelectedItem().toString();
-        System.out.println(output);
 
         ObservableList<KeyVal> items =FXCollections.observableArrayList (ht.similarity(output));
 

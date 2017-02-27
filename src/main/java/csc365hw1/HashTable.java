@@ -2,6 +2,7 @@ package csc365hw1;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,15 +11,13 @@ import java.util.Collections;
  * Created by landon on 2/21/17.
  */
 public class HashTable {
-    private static int size;
+    private int size;
     private CLinkedList[] HT;
-    private ArrayList<Double> checker;
 
 
     public HashTable() {
-        size = 4001;
+        size = 20001;
         HT = new CLinkedList[nextPrime()];
-        checker = new ArrayList<>();
     }
 
     public void put(KeyVal keyVal) {
@@ -32,9 +31,10 @@ public class HashTable {
         }
     }
 
-    public double[] get(String key) {
+    public Double[] get(String key) {
         Hashing h = new Hashing(key, key.length());
         int hash = h.hasher() % nextPrime();
+        //System.out.println(hash);
 
         if (indexEmpty(hash)) {
             return null;
@@ -42,48 +42,76 @@ public class HashTable {
 
         KeyVal head = HT[hash].head;
 
-        while (!indexEmpty(hash) && !HT[hash].head.getKey().equals(key)) {
-            head = HT[hash].head.getNext();
+        while (!indexEmpty(hash) && !head.getKey().equals(key)) {
+            head = head.getNext();
         }
         return head.getVal();
     }
 
+    //FOR TESTING - WILL REMOVE
     public void displayHash(){
         for(int i = 0; i < HT.length; i++){
             System.out.print(i + " ");
             if(HT[i] != null){
                 KeyVal kv = HT[i].head;
-                System.out.print(kv.getKey() + " " + Arrays.toString(kv.getVal()) + "  ");
+                System.out.print(kv.getKey() + " ");
                 while(kv.getNext() != null){
                     kv = kv.getNext();
-                    System.out.print(kv.getKey() + " " + Arrays.toString(kv.getVal()) + "  ");
+                    System.out.print(kv.getKey() + " ");
                 }
             }
             System.out.println();
         }
     }
 
-    public void similarity(String key){
-        PearsonsCorrelation pc = new PearsonsCorrelation();
+    public ArrayList<KeyVal> similarity(String key){
+        //earsonsCorrelation pc = new PearsonsCorrelation();
+        ArrayList<KeyVal> test = new ArrayList<>();
+        Double check = 500000000.0;
         for(int i = 0; i < HT.length; i++){
             if(HT[i] != null){
                 KeyVal kv = HT[i].head;
-                System.out.println(kv.getKey() + "  " + pc.correlation(get(key), kv.getVal()));
-                while(kv.getNext() != null){
+                if(ManhattanDistance(get(key), kv.getVal()) < check && !kv.getKey().equals(key)) {
+                    check = ManhattanDistance(get(key), kv.getVal());
+                    kv.setmD(check);
+                    test.add(kv);
+                    //System.out.println(kv.getKey() + "  " + ManhattanDistance(get(key), kv.getVal()));
+                }
+                while(kv.getNext() != null && !kv.getNext().getKey().equals(key)){
                     kv = kv.getNext();
-                    System.out.println(kv.getKey() + "  " + pc.correlation(get(key), kv.getVal()));
+                    if(ManhattanDistance(get(key), kv.getVal()) < check) {
+                        check = ManhattanDistance(get(key), kv.getVal());
+                        kv.setmD(check);
+                        test.add(kv);
+                        //System.out.println(kv.getKey() + "  " + ManhattanDistance(get(key), kv.getVal()));
+                    }
                 }
             }
         }
+        Collections.sort(test);
+        System.out.println("SIM");
+        for(KeyVal k : test){
+            System.out.println(k + "     " + k.getmD());
+        }
+        System.out.println();
+
+        return test;
+    }
+
+    public Double ManhattanDistance(Double[] x, Double[] y){
+        Double sumx = 0.0;
+        Double sumy = 0.0;
+
+        for(int i = 0; i < x.length; i++){
+            sumx += x[i];
+            sumy += y[i];
+        }
+        return Math.abs(sumx - sumy);
     }
 
     private boolean indexEmpty(int h) {
-        if (HT[h] != null) {
-            return false;
-        }
-        return true;
+        return HT[h] == null;
     }
-
 
     private boolean isPrime(int n) {
         if (n % 2 == 0) {
@@ -95,7 +123,6 @@ public class HashTable {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -107,7 +134,7 @@ public class HashTable {
         }
     }
 
-    private static class Hashing {
+    private class Hashing {
         private String hashableKey;
         private int hashed;
         private int length;

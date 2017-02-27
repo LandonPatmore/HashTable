@@ -1,28 +1,26 @@
 package csc365hw1;
 
-import java.util.Arrays;
-
 /**
  * Created by landon on 2/22/17.
  */
-public class KeyVal {
+public class KeyVal implements Comparable<KeyVal> {
     private String key;
-    private double[] val;
+    private Double[] val;
+    private Double mD;
 
     private KeyVal next;
 
-    public KeyVal(String k, double[] v) {
+    public KeyVal(String k, Double[] v) {
         key = k;
         val = v;
-        next = null;
-
+        mD = 0.0;
     }
 
     public String getKey() {
         return key;
     }
 
-    public double[] getVal() {
+    public Double[] getVal() {
         return val;
     }
 
@@ -34,14 +32,21 @@ public class KeyVal {
         this.next = next;
     }
 
-//    @Override
-//    public String toString() {
-//        return key + " " + Arrays.toString(val);
-//    }
-
-
     @Override
     public String toString() {
         return key;
+    }
+
+    public Double getmD() {
+        return mD;
+    }
+
+    public void setmD(Double mD) {
+        this.mD = mD;
+    }
+
+    @Override
+    public int compareTo(KeyVal o) {
+        return this.getmD().compareTo(o.getmD());
     }
 }

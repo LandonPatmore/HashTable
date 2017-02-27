@@ -12,12 +12,11 @@ public class CLinkedList {
     }
 
     public void add(KeyVal keyVal) {
-        while (head.getNext() != null) {
-            head = head.getNext();
+        KeyVal k = head;
+        while (k.getNext() != null) {
+            k = k.getNext();
         }
-        if (head.getNext() == null) {
-            head.setNext(keyVal);
-        }
+        k.setNext(keyVal);
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class DataPuller {
     private ArrayList<KeyVal> stockInfo;
     private String URL = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?date.gte=20110101" +
-            "&date.lt=20160101&ticker=MSFT,FB,GOOGL,INTC,CSCO,ORCL,AAPL,AMZN,AMD&";
+            "&date.lt=20160101&ticker=MSFT,FB,GOOGL,INTC,CSCO,AAPL,AMZN,AMD&";
     private String KEY = "api_key=aWGH5wHqiKkFgKFSSEuB";
 
     /**

@@ -1,5 +1,6 @@
 package csc365hw1;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,7 +12,7 @@ import java.util.Collections;
  * Custom HashTable Implementation
  */
 public class HashTable {
-    private CLinkedList[] HT;
+    private KeyVal[] HT;
     private int tableSize = 10000;
     private int count = 0;
 
@@ -20,7 +21,7 @@ public class HashTable {
      */
 
     public HashTable() {
-        HT = new CLinkedList[nextPrime(tableSize)];
+        HT = new KeyVal[nextPrime(tableSize)];
     }
 
     /**
@@ -32,11 +33,11 @@ public class HashTable {
         Hashing h = new Hashing(keyVal.getKey(), keyVal.getKey().length());
         int hash = h.hasher() % nextPrime(tableSize);
         if (indexEmpty(hash)) {
-            HT[hash] = new CLinkedList(keyVal);
+            HT[hash] = keyVal;
             count++;
         }
-        if (!indexEmpty(hash) && !HT[hash].head.getKey().equals(keyVal.getKey())) {
-            HT[hash].add(keyVal);
+        if (!indexEmpty(hash) && !HT[hash].getKey().equals(keyVal.getKey())) {
+            HT[hash].setNext(keyVal);
             count++;
         }
 
@@ -59,7 +60,7 @@ public class HashTable {
             return null;
         }
 
-        KeyVal head = HT[hash].head;
+        KeyVal head = HT[hash];
 
         while (!indexEmpty(hash) && !head.getKey().equals(key)) {
             head = head.getNext();
@@ -75,7 +76,7 @@ public class HashTable {
         for(int i = 0; i < HT.length; i++){
             System.out.print(i + " ");
             if(HT[i] != null){
-                KeyVal kv = HT[i].head;
+                KeyVal kv = HT[i];
                 System.out.print(kv.getKey() + " ");
                 while(kv.getNext() != null){
                     kv = kv.getNext();
@@ -94,24 +95,25 @@ public class HashTable {
      */
 
     public ArrayList<KeyVal> similarity(String key){
-        //earsonsCorrelation pc = new PearsonsCorrelation();
         ArrayList<KeyVal> test = new ArrayList<>();
-        Double check = 500000000.0;
+        Double check = 200000.0;
         for(int i = 0; i < HT.length; i++){
             if(!indexEmpty(i)){
-                KeyVal kv = HT[i].head;
+                KeyVal kv = HT[i];
                 Double distance = ManhattanDistance(get(key), kv.getVal());
-                if(distance < check && !kv.getKey().equals(key)) {
-                    check = distance;
-                    kv.setmD(check);
-                    test.add(kv);
+                if(!kv.getKey().equals(key)) {
+                    if(distance < check) {
+                        check = distance;
+                        kv.setmD(distance);
+                        test.add(kv);
+                    }
                 }
                 while(kv.getNext() != null && !kv.getNext().getKey().equals(key)){
                     kv = kv.getNext();
                     distance = ManhattanDistance(get(key), kv.getVal());
                     if(distance < check) {
                         check = distance;
-                        kv.setmD(check);
+                        kv.setmD(distance);
                         test.add(kv);
                     }
                 }
@@ -197,16 +199,16 @@ public class HashTable {
 
         tableSize = 2 * tableSize;
         tableSize = nextPrime(tableSize);
-        CLinkedList[] old = HT;
+        KeyVal[] old = HT;
 
         System.out.println("SIZE OF NEW TABLE: " + tableSize);
 
-        HT = new CLinkedList[tableSize];
+        HT = new KeyVal[tableSize];
         count = 0;
 
         for(int i = 0; i < old.length; i++){
             if(old[i] != null){
-                KeyVal kv = old[i].head;
+                KeyVal kv = old[i];
                 put(kv);
 
                 while (kv.getNext() != null) {

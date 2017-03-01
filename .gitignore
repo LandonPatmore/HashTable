@@ -23,6 +23,8 @@ hs_err_pid*
 .idea/codeStyleSettings.xml
 target/
 .idea/
+pom.xml
+#
 #
 # # Sensitive or high-churn files:
 .idea/**/dataSources/

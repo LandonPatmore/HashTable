@@ -96,26 +96,18 @@ public class HashTable {
 
     public ArrayList<KeyVal> similarity(String key){
         ArrayList<KeyVal> test = new ArrayList<>();
-        Double check = 200000.0;
+        Double check = 2000000.0;
         for(int i = 0; i < HT.length; i++){
             if(!indexEmpty(i)){
                 KeyVal kv = HT[i];
-                Double distance = ManhattanDistance(get(key), kv.getVal());
-                if(!kv.getKey().equals(key)) {
-                    if(distance < check) {
+                while(kv != null && !kv.getKey().equals(key)) {
+                    Double distance = ManhattanDistance(get(key), kv.getVal());
+                    if(distance < check){
                         check = distance;
                         kv.setmD(distance);
                         test.add(kv);
                     }
-                }
-                while(kv.getNext() != null && !kv.getNext().getKey().equals(key)){
                     kv = kv.getNext();
-                    distance = ManhattanDistance(get(key), kv.getVal());
-                    if(distance < check) {
-                        check = distance;
-                        kv.setmD(distance);
-                        test.add(kv);
-                    }
                 }
             }
         }

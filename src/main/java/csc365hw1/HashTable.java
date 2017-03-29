@@ -1,5 +1,6 @@
 package csc365hw1;
 
+import java.lang.reflect.Array;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +14,7 @@ import java.util.Collections;
  */
 public class HashTable {
     private KeyVal[] HT;
-    private int tableSize = 10000;
+    private int tableSize = 20000;
     private int count = 0;
 
     /**
@@ -41,9 +42,27 @@ public class HashTable {
             count++;
         }
 
-        if((float)(count / tableSize) > 0.75){
+        if((float)(count / tableSize) > 0.66){
             resize();
         }
+    }
+
+    /**
+     *
+     * @return a list of key names inside the hashtable
+     */
+
+    public ArrayList<String> getKeys(){
+        ArrayList<String> keys = new ArrayList<>();
+        for(KeyVal k : HT){
+            if(k != null) {
+                keys.add(k.getKey());
+            }
+        }
+
+        Collections.sort(keys);
+
+        return keys;
     }
 
     /**
@@ -95,7 +114,7 @@ public class HashTable {
      */
 
     public ArrayList<KeyVal> similarity(String key){
-        ArrayList<KeyVal> test = new ArrayList<>();
+        ArrayList<KeyVal> similarities = new ArrayList<>();
         Double check = 20000.0;
         for(int i = 0; i < HT.length; i++){
             if(!indexEmpty(i)){
@@ -106,20 +125,21 @@ public class HashTable {
                         //check = distance; //had to be commented out because the check wouldn't check all if a value
                         // before hand was smaller then a future one even if it was smaller then the original check
                         kv.setmD(distance);
-                        test.add(kv);
+                        similarities.add(kv);
                     }
                     kv = kv.getNext();
                 }
             }
         }
 
-        Collections.sort(test);
-        for(KeyVal k : test){
+        Collections.sort(similarities);
+        //used to show distances, not needed
+        for(KeyVal k : similarities){
             System.out.println(k + "     " + k.getmD());
         }
         System.out.println();
 
-        return test;
+        return similarities;
     }
 
     /**
@@ -188,13 +208,9 @@ public class HashTable {
      */
 
     private void resize(){
-        System.out.println("TO BE RESIZED");
-
         tableSize = 2 * tableSize;
         tableSize = nextPrime(tableSize);
         KeyVal[] old = HT;
-
-        System.out.println("SIZE OF NEW TABLE: " + tableSize);
 
         HT = new KeyVal[tableSize];
         count = 0;

@@ -12,6 +12,10 @@ public class KeyVal implements Comparable<KeyVal> {
     private Double[] val;
     private Double mD;
 
+    private boolean leaf;
+    private boolean root;
+
+    private KeyVal prev;
     private KeyVal next;
 
     /**
@@ -23,6 +27,22 @@ public class KeyVal implements Comparable<KeyVal> {
         key = k;
         val = v;
         mD = 0.0;
+    }
+
+    public void setLeaf(boolean leaf) {
+        this.leaf = leaf;
+    }
+
+    public void setRoot(boolean root) {
+        this.root = root;
+    }
+
+    public KeyVal getPrev() {
+        return prev;
+    }
+
+    public void setPrev(KeyVal prev) {
+        this.prev = prev;
     }
 
     /**

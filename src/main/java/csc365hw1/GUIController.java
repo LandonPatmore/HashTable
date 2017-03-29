@@ -21,7 +21,7 @@ public class GUIController {
     private Label gLabel;
 
     @FXML
-    private ComboBox<KeyVal> listBox;
+    private ComboBox<String> listBox;
 
     @FXML
     private ListView<KeyVal> listView;
@@ -32,7 +32,6 @@ public class GUIController {
 
     public void initialize(){
         dp = new DataPuller();
-        ht = new HashTable();
     }
 
     /**
@@ -42,15 +41,11 @@ public class GUIController {
 
     @FXML
     void handleButtonActionGetData() throws UnirestException {
-        d = dp.getStockData();
-
-        for(KeyVal dh : d){
-            ht.put(dh);
-        }
+        ht = dp.getStockData();
 
         gLabel.setText("Done getting data and hashing!");
 
-        ObservableList<KeyVal> obList = FXCollections.observableList(d);
+        ObservableList<String> obList = FXCollections.observableList(ht.getKeys());
 
         listBox.setItems(obList);
         listBox.getSelectionModel().selectFirst();
@@ -63,7 +58,7 @@ public class GUIController {
 
     @FXML
     void handleButtonActionSubmit(){
-        String output = listBox.getSelectionModel().getSelectedItem().toString();
+        String output = listBox.getSelectionModel().getSelectedItem();
 
         ObservableList<KeyVal> items =FXCollections.observableArrayList (ht.similarity(output));
 

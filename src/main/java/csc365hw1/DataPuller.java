@@ -15,17 +15,17 @@ import java.util.ArrayList;
  * Custom class to pull data from stock site
  */
 public class DataPuller {
-    private ArrayList<KeyVal> stockInfo;
     private String URL = "https://www.quandl.com/api/v3/datatables/WIKI/PRICES.json?date.gte=20110101" +
             "&date.lt=20160101&ticker=MSFT,FB,GOOGL,INTC,CSCO,AAPL,AMZN,AMD&";
     private String KEY = "api_key=aWGH5wHqiKkFgKFSSEuB";
+    private HashTable HT;
 
     /**
      * creates a new ArrayList when instantiated
      */
 
     public DataPuller() {
-        stockInfo = new ArrayList<>();
+        HT = new HashTable();
     }
 
     /**
@@ -34,7 +34,7 @@ public class DataPuller {
      * @throws UnirestException in the case that Unirest can't reach the server for any reason so the app does not crash
      */
 
-    public ArrayList<KeyVal> getStockData() throws UnirestException {
+    public HashTable getStockData() throws UnirestException {
         HttpResponse<JsonNode> jsonResponse;
         KeyVal keyVal;
         try {
@@ -52,10 +52,10 @@ public class DataPuller {
                 }
 
                 keyVal = new KeyVal(key, info);
-                stockInfo.add(keyVal);
+                HT.put(keyVal);
             }
 
-            return stockInfo;
+            return HT;
         } catch (UnirestException e) {
             e.printStackTrace();
             return null;

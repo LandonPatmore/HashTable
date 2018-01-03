@@ -1,2 +1,8 @@
-# 365HW1
-CSC 365 Homework 1
+# HashTable
+
+## Description
+* Custom Bucketed HashTable.
+
+## Language
+* Java
+
